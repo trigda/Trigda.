@@ -116,17 +116,12 @@ async function sendMessage() {
   document.getElementById('sendBtn').disabled = true;
 
   try {
-    const messages = [
-      { role: 'user', parts: [{ text: SYSTEM_PROMPT + '\n\nUser says: ' + msg }] },
-      ...conversationHistory.slice(0, -1),
-      { role: 'user', parts: [{ text: msg }] }
-    ];
-
     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: messages,
+        systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+        contents: conversationHistory,
         generationConfig: { temperature: 0.8, maxOutputTokens: 400, topP: 0.95 },
         safetySettings: [
           { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
