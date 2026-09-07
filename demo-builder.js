@@ -124,16 +124,12 @@ async function sendDemoMessage() {
   document.getElementById('demoSendBtn').disabled = true;
 
   try {
-    const messages = [
-      { role: 'user', parts: [{ text: demoSystemPrompt + '\n\nVisitor says: ' + msg }] },
-      ...demoConversation.slice(0, -1),
-      { role: 'user', parts: [{ text: msg }] }
-    ];
     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: messages,
+        systemInstruction: { parts: [{ text: demoSystemPrompt }] },
+        contents: demoConversation,
         generationConfig: { temperature: 0.8, maxOutputTokens: 300 }
       })
     });
